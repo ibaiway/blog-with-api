@@ -23,26 +23,33 @@ async function createModal() {
 
   let modalTitle = document.querySelector(".modal-title");
   modalTitle.innerText = post.title;
+  let postDiv = document.getElementById("postBody");
   let postBody = document.createElement("p");
+  postDiv.innerText = "";
   postBody.innerText = post.body;
-  document.getElementById("postBody").appendChild(postBody);
+  postDiv.appendChild(postBody);
 
+  //User
+  let userDiv = document.getElementById("user");
+  userDiv.innerText = "";
   let userTitle = document.createElement("h4");
   userTitle.innerText = "USER";
-  document.getElementById("user").appendChild(userTitle);
+  userDiv.appendChild(userTitle);
   let userName = document.createElement("p");
   userName.innerText = user.username;
-  document.getElementById("user").appendChild(userName);
+  userDiv.appendChild(userName);
   let userEmail = document.createElement("p");
   userEmail.innerText = user.email;
-  document.getElementById("user").appendChild(userEmail);
+  userDiv.appendChild(userEmail);
 
+  let commentsDiv = document.getElementById("comments");
+  commentsDiv.innerText = "";
   let commentButton = document.createElement("button");
   commentButton.innerText = "Load comments";
   commentButton.setAttribute("class", "btn btn-secondary");
   commentButton.setAttribute("data-postId", post.id);
   commentButton.addEventListener("click", showComments);
-  document.getElementById("comments").appendChild(commentButton);
+  commentsDiv.appendChild(commentButton);
 
   var myModalEl = document.querySelector("#modalPost");
   var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
