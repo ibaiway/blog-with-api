@@ -69,9 +69,36 @@ async function getPost(id) {
   );
 }
 
-function showComments() {
-  console.log(this.dataset.postid);
+async function showComments() {
+  let commentsDiv = document.getElementById("comments");
+  commentsDiv.innerHTML =
+    '<button class="btn btn-secondary" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...</button>';
+  let comments = await getComments(this.dataset.postid);
+  commentsDiv.innerHTML = "";
+  let ul = document.createElement("ul");
+  ul.classList = "list-group list-group-flush";
+  comments.forEach((element) => {
+    let li = document.createElement("li");
+    li.classList = "list-group-item";
+    let name = document.createElement("p");
+    name.innerText = element.name;
+    name.style.fontWeight = "bold";
+    let body = document.createElement("p");
+    body.innerText = element.body;
+    let email = document.createElement("p");
+    email.innerText = element.email;
+    li.appendChild(name);
+    li.appendChild(body);
+    li.appendChild(email);
+    ul.appendChild(li);
+  });
+  commentsDiv.appendChild(ul);
 }
 
-function cleanModal() {}
+async function getComments(id) {
+  return fetch(
+    `https://jsonplaceholder.typicode.com/posts/${id}/comments`
+  ).then((res) => res.json());
+}
+
 getPosts();
