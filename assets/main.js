@@ -1,9 +1,19 @@
+let page = 1;
+const limit = 15;
+let pageNav = document.getElementById("pageNav")
+pageNav.addEventListener("click", changePagination)
+
 function getPosts() {
-  fetch("https://jsonplaceholder.typicode.com/posts/")
+  fetch(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}` )
     .then((res) => res.json())
     .then((data) => {
+
+        if (data.length > 0){
+
+       
       console.log(data);
       const ul = document.getElementById("ul");
+      ul.innerHTML = ""
       data.forEach((element) => {
         const li = document.createElement("li");
         li.innerText = element.title;
@@ -12,7 +22,7 @@ function getPosts() {
         ul.appendChild(li);
 
         li.addEventListener("click", createModal);
-      });
+      }); }
     });
 }
 
@@ -99,6 +109,22 @@ async function getComments(id) {
   return fetch(
     `https://jsonplaceholder.typicode.com/posts/${id}/comments`
   ).then((res) => res.json());
+}
+
+function changePagination(e){
+    if (e.target.innerText === "Previous" ){
+page--
+getPosts()
+    }
+    else if(e.target.innerText === "Next" ){
+        page++
+        getPosts()
+    }
+    else {
+      let x = parseInt(e.target.innerText)
+      page = x
+      getPosts()
+    }
 }
 
 getPosts();
