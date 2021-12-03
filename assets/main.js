@@ -1,30 +1,35 @@
 let page = 1;
 const limit = 15;
 let pageNav = document.getElementById("pageNav");
-pageNav.addEventListener("click", changePagination);
+let pagEvent = pageNav.addEventListener("click", changePagination);
+let last = null
 
-function getPosts() {
-  fetch(
+async function getPosts() {
+ let response = await fetch(
     `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`
   )
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.length > 0) {
-        console.log(data);
-        const ul = document.getElementById("ul");
-        ul.innerHTML = "";
-        data.forEach((element) => {
-          const li = document.createElement("li");
-          li.innerText = element.title;
-          li.classList = "list-group-item";
-          li.setAttribute("data-id", element.id);
-          ul.appendChild(li);
+  let link = response.headers.get("link")
+  let parse = parseData(link)
+  last = parse["last"]
+  updatePagination(parse)
+  console.log(parse)
+  let data = await response.json()
+  if (data.length > 0) {
+    const ul = document.getElementById("ul");
+    ul.innerHTML = "";
+    data.forEach((element) => {
+      const li = document.createElement("li");
+      li.innerText = element.title;
+      li.classList = "list-group-item";
+      li.setAttribute("data-id", element.id);
+      ul.appendChild(li);
 
-          li.addEventListener("click", createModal);
-        });
-      }
+      li.addEventListener("click", createModal);
     });
-}
+  }
+};
+      
+
 
 async function createModal() {
   let postId = this.dataset.id;
@@ -112,26 +117,57 @@ async function getComments(id) {
 }
 
 function changePagination(e) {
-  if (e.target.innerText === "Previous") {
-    if (page > 1) {
-      page--;
-      getPosts();
-    }
-  } else if (e.target.innerText === "Next") {
-    page++;
-    getPosts();
-  } else {
-    let x = parseInt(e.target.innerText);
-    page = x;
-    getPosts();
+  if(e.target.innerText === "Next"){
+    if(last != page){
+page = e.target.getAttribute("data-page")
+getPosts()
+}
+}
+if(e.target.innerText === "Previous"){
+  if(page != 1){
+page = e.target.getAttribute("data-page")
+getPosts()
+}
+}
+}
+
+
+function parseData(data) {
+  let arrData = data.split("link:")
+  data = arrData.length == 2? arrData[1]: data;
+  let parsed_data = {}
+
+  arrData = data.split(",")
+
+  for (d of arrData){
+      linkInfo = /<([^>]+)>;\s+rel="([^"]+)"/ig.exec(d)
+
+      parsed_data[linkInfo[2]]=linkInfo[1]
   }
-  if (page > 1){
-   document.querySelector("#pageNav li:first-child").classList.remove("disabled")
+for (const key in parsed_data) {
+  parsed_data[key] = parsed_data[key].substring(parsed_data[key].indexOf("=") + 1, parsed_data[key].indexOf("&"))
+}
+  return parsed_data;
+}
+
+function updatePagination(pages){
+  let previousElement = document.querySelector("#pageNav li:first-child a")
+  let nextElement = document.querySelector("#pageNav li:last-child a")
+if (pages.prev){
+previousElement.parentElement.classList.remove("disabled")
+previousElement.setAttribute("data-page", pages.prev)
+}
+else {
+  previousElement.parentElement.classList.add("disabled")
+}
+if (pages.next){
+  nextElement.parentElement.classList.remove("disabled")
+  nextElement.setAttribute("data-page", pages.next)
   }
   else {
-    document.querySelector("#pageNav li:first-child").classList.add("disabled")
-    console.log("Sup")
+    nextElement.parentElement.classList.add("disabled")
   }
+  console.log(pages)
 }
 
 getPosts();
