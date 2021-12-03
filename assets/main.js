@@ -3,10 +3,11 @@ const limit = 15;
 let pageNav = document.getElementById("pageNav");
 let pagEvent = pageNav.addEventListener("click", changePagination);
 let last = null
+const url = " http://localhost:3000"
 
 async function getPosts() {
  let response = await fetch(
-    `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`
+    `${url}/posts?_page=${page}&_limit=${limit}`
   )
   let link = response.headers.get("link")
   let parse = parseData(link)
@@ -69,17 +70,21 @@ async function createModal() {
   var myModalEl = document.querySelector("#modalPost");
   var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
   modal.show();
-  console.log(user);
+
+  //event listeners
+  document.getElementById("delete").setAttribute("data-postId", post.id)
+  document.getElementById("delete").addEventListener("click", deletePost)
+  
 }
 
 async function getUser(id) {
-  return fetch(`https://jsonplaceholder.typicode.com/users/${id}`).then((res) =>
+  return fetch(`${url}/users/${id}`).then((res) =>
     res.json()
   );
 }
 
 async function getPost(id) {
-  return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((res) =>
+  return fetch(`${url}/posts/${id}`).then((res) =>
     res.json()
   );
 }
@@ -112,7 +117,7 @@ async function showComments() {
 
 async function getComments(id) {
   return fetch(
-    `https://jsonplaceholder.typicode.com/posts/${id}/comments`
+    `${url}/posts/${id}/comments`
   ).then((res) => res.json());
 }
 
@@ -168,6 +173,20 @@ if (pages.next){
     nextElement.parentElement.classList.add("disabled")
   }
   console.log(pages)
+}
+
+async function deletePost(e){
+let postNun = e.target.getAttribute("data-postId")
+ await fetch(`${url}/posts/${postNun}`, {
+  method: "DELETE"
+}).then(res => {
+  if (res.ok){
+    var myModalEl = document.querySelector("#modalPost");
+  var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
+  modal.hide()
+  getPosts()
+  }
+})
 }
 
 getPosts();
