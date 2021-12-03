@@ -2,6 +2,8 @@ let page = 1;
 const limit = 15;
 let pageNav = document.getElementById("pageNav");
 let pagEvent = pageNav.addEventListener("click", changePagination);
+document.getElementById("modalEditPost").addEventListener("show.bs.modal", createPostModal)
+document.getElementById("saveModifiedPost").addEventListener("click", modifyPost)
 let last = null
 const url = " http://localhost:3000"
 
@@ -74,7 +76,7 @@ async function createModal() {
   //event listeners
   document.getElementById("delete").setAttribute("data-postId", post.id)
   document.getElementById("delete").addEventListener("click", deletePost)
-  
+  document.getElementById("modify").setAttribute("data-postId", post.id)
 }
 
 async function getUser(id) {
@@ -182,6 +184,31 @@ let postNun = e.target.getAttribute("data-postId")
 }).then(res => {
   if (res.ok){
     var myModalEl = document.querySelector("#modalPost");
+  var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
+  modal.hide()
+  getPosts()
+  }
+})
+}
+
+function createPostModal(e) {
+  document.getElementById("saveModifiedPost").setAttribute("data-postId",  e.relatedTarget.getAttribute("data-postId"))
+}
+
+async function modifyPost(e){
+let id = e.target.getAttribute("data-postId")
+let title = document.getElementById("title").value
+let body = document.getElementById("fBody").value
+
+let data = {title: title, body:body}
+
+await fetch(`${url}/posts/${id}`, {
+  method: "PATCH",
+  headers: {"Content-type":"application/json"},
+  body: JSON.stringify(data)
+}).then(res => {
+  if (res.ok){
+    var myModalEl = document.querySelector("#modalEditPost");
   var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
   modal.hide()
   getPosts()
