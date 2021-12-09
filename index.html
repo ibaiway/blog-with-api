@@ -13,7 +13,6 @@
       crossorigin="anonymous"
     />
 
-
     <title>Hello, world!</title>
     <script src="assets/main.js" defer></script>
   </head>
@@ -24,69 +23,97 @@
       </div>
     </nav>
     <div class="container mt-4">
-    <div class="card">
-      <div class="card-body">
-        <ul class="list-group list-group-flush" id="ul">
-        </ul>
+      <div class="card">
+        <div class="card-body">
+          <ul class="list-group list-group-flush" id="ul"></ul>
+        </div>
       </div>
     </div>
-  </div>
 
-  <nav class="mt-4" aria-label="Page navigation example" id="pageNav">
-    <ul class="pagination justify-content-center">
-      <li class="page-item disabled"><a class="page-link">Previous</a></li>
-      <li class="page-item"><a class="page-link">1</a></li>
-      <li class="page-item"><a class="page-link">2</a></li>
-      <li class="page-item"><a class="page-link">3</a></li>
-      <li class="page-item"><a class="page-link">Next</a></li>
-    </ul>
-  </nav>
+    <nav class="mt-4" aria-label="Page navigation example">
+      <ul class="pagination justify-content-center" id="pageNav">
+        <li class="page-item disabled"><a class="page-link">Previous</a></li>
+        <li class="page-item">
+          <a class="page-link" data-page="1">1</a>
+        </li>
+        <li class="page-item"><a class="page-link" data-page="2">2</a></li>
+        <li class="page-item"><a class="page-link" data-page="3">3</a></li>
+        <li class="page-item"><a class="page-link">Next</a></li>
+      </ul>
+    </nav>
 
-  <div class="modal" id="modalPost" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="postBody">
-
+    <div class="modal" id="modalPost" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Modal title</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
           </div>
-          <div id="user"></div>
-          <div id="comments"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id= "modify" class="btn btn-success" data-bs-target="#modalEditPost" data-bs-toggle ="modal">Modify post</button>
-          <button type="button" id="delete" class="btn btn-danger">Delete post</button>
-        </div>
-      </div>
-    </div>
-  </div>
-      <!-- Second Modal -->
-  <div class="modal" id="modalEditPost" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Edit Post</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <label for="title" class="form-label fw-bold">Please type new title</label>
-<input type="text" id="title" class="form-control">
-<label for="fBody" class="form-label">Please modify your post content</label>
-<textarea id="fBody" class="form-control" style="height: 100px;"></textarea>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button"  class="btn btn-danger">Cancel</button>
-          <button type="button" id="saveModifiedPost"  class="btn btn-primary">Save post</button>
+          <div class="modal-body">
+            <div id="postBody"></div>
+            <div id="user"></div>
+            <div id="comments"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              id="modify"
+              class="btn btn-success"
+              data-bs-target="#modalEditPost"
+              data-bs-toggle="modal"
+            >
+              Modify post
+            </button>
+            <button type="button" id="delete" class="btn btn-danger">
+              Delete post
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
+    <!-- Second Modal -->
+    <div class="modal" id="modalEditPost" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Post</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <label for="title" class="form-label fw-bold"
+                >Please type new title</label
+              >
+              <input type="text" id="title" class="form-control" />
+              <label for="fBody" class="form-label"
+                >Please modify your post content</label
+              >
+              <textarea
+                id="fBody"
+                class="form-control"
+                style="height: 100px"
+              ></textarea>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger">Cancel</button>
+            <button type="button" id="saveModifiedPost" class="btn btn-primary">
+              Save post
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Bootstrap Bundle with Popper -->
     <script

@@ -1,22 +1,24 @@
 let page = 1;
-const limit = 15;
+const limit = 20;
 let pageNav = document.getElementById("pageNav");
 let pagEvent = pageNav.addEventListener("click", changePagination);
-document.getElementById("modalEditPost").addEventListener("show.bs.modal", createPostModal)
-document.getElementById("saveModifiedPost").addEventListener("click", modifyPost)
-let last = null
-const url = " http://localhost:3000"
+document
+  .getElementById("modalEditPost")
+  .addEventListener("show.bs.modal", createPostModal);
+document
+  .getElementById("saveModifiedPost")
+  .addEventListener("click", modifyPost);
+let last = null;
+const url = " http://localhost:3000";
 
 async function getPosts() {
- let response = await fetch(
-    `${url}/posts?_page=${page}&_limit=${limit}`
-  )
-  let link = response.headers.get("link")
-  let parse = parseData(link)
-  last = parse["last"]
-  updatePagination(parse)
-  console.log(parse)
-  let data = await response.json()
+  let response = await fetch(`${url}/posts?_page=${page}&_limit=${limit}`);
+  let link = response.headers.get("link");
+  let parse = parseData(link);
+  last = parse["last"];
+  updatePagination(parse);
+  console.log(parse);
+  let data = await response.json();
   if (data.length > 0) {
     const ul = document.getElementById("ul");
     ul.innerHTML = "";
@@ -30,9 +32,7 @@ async function getPosts() {
       li.addEventListener("click", createModal);
     });
   }
-};
-      
-
+}
 
 async function createModal() {
   let postId = this.dataset.id;
@@ -74,21 +74,17 @@ async function createModal() {
   modal.show();
 
   //event listeners
-  document.getElementById("delete").setAttribute("data-postId", post.id)
-  document.getElementById("delete").addEventListener("click", deletePost)
-  document.getElementById("modify").setAttribute("data-postId", post.id)
+  document.getElementById("delete").setAttribute("data-postId", post.id);
+  document.getElementById("delete").addEventListener("click", deletePost);
+  document.getElementById("modify").setAttribute("data-postId", post.id);
 }
 
 async function getUser(id) {
-  return fetch(`${url}/users/${id}`).then((res) =>
-    res.json()
-  );
+  return fetch(`${url}/users/${id}`).then((res) => res.json());
 }
 
 async function getPost(id) {
-  return fetch(`${url}/posts/${id}`).then((res) =>
-    res.json()
-  );
+  return fetch(`${url}/posts/${id}`).then((res) => res.json());
 }
 
 async function showComments() {
@@ -118,102 +114,131 @@ async function showComments() {
 }
 
 async function getComments(id) {
-  return fetch(
-    `${url}/posts/${id}/comments`
-  ).then((res) => res.json());
+  return fetch(`${url}/posts/${id}/comments`).then((res) => res.json());
 }
 
 function changePagination(e) {
-  if(e.target.innerText === "Next"){
-    if(last != page){
-page = e.target.getAttribute("data-page")
-getPosts()
+  if (e.target.innerText === "Next") {
+    if (last != page) {
+      page = e.target.getAttribute("data-page");
+      getPosts();
+    }
+  } else if (e.target.innerText === "Previous") {
+    if (page != 1) {
+      page = e.target.getAttribute("data-page");
+      getPosts();
+    }
+  } else if (e.target.id == "pageNav") {
+    //do nothing because clicking in ul
+  } else {
+    page = e.target.getAttribute("data-page");
+    getPosts();
+    console.log(e.target);
+  }
 }
-}
-if(e.target.innerText === "Previous"){
-  if(page != 1){
-page = e.target.getAttribute("data-page")
-getPosts()
-}
-}
-}
-
 
 function parseData(data) {
-  let arrData = data.split("link:")
-  data = arrData.length == 2? arrData[1]: data;
-  let parsed_data = {}
+  let arrData = data.split("link:");
+  data = arrData.length == 2 ? arrData[1] : data;
+  let parsed_data = {};
 
-  arrData = data.split(",")
+  arrData = data.split(",");
 
-  for (d of arrData){
-      linkInfo = /<([^>]+)>;\s+rel="([^"]+)"/ig.exec(d)
+  for (d of arrData) {
+    linkInfo = /<([^>]+)>;\s+rel="([^"]+)"/gi.exec(d);
 
-      parsed_data[linkInfo[2]]=linkInfo[1]
+    parsed_data[linkInfo[2]] = linkInfo[1];
   }
-for (const key in parsed_data) {
-  parsed_data[key] = parsed_data[key].substring(parsed_data[key].indexOf("=") + 1, parsed_data[key].indexOf("&"))
-}
+  for (const key in parsed_data) {
+    parsed_data[key] = parsed_data[key].substring(
+      parsed_data[key].indexOf("=") + 1,
+      parsed_data[key].indexOf("&")
+    );
+  }
   return parsed_data;
 }
 
-function updatePagination(pages){
-  let previousElement = document.querySelector("#pageNav li:first-child a")
-  let nextElement = document.querySelector("#pageNav li:last-child a")
-if (pages.prev){
-previousElement.parentElement.classList.remove("disabled")
-previousElement.setAttribute("data-page", pages.prev)
-}
-else {
-  previousElement.parentElement.classList.add("disabled")
-}
-if (pages.next){
-  nextElement.parentElement.classList.remove("disabled")
-  nextElement.setAttribute("data-page", pages.next)
+function updatePagination(pages) {
+  let previousElement = document.querySelector("#pageNav li:first-child a");
+  let nextElement = document.querySelector("#pageNav li:last-child a");
+  if (pages.prev) {
+    previousElement.parentElement.classList.remove("disabled");
+    previousElement.setAttribute("data-page", pages.prev);
+  } else {
+    previousElement.parentElement.classList.add("disabled");
   }
-  else {
-    nextElement.parentElement.classList.add("disabled")
+  if (pages.next) {
+    nextElement.parentElement.classList.remove("disabled");
+    nextElement.setAttribute("data-page", pages.next);
+  } else {
+    nextElement.parentElement.classList.add("disabled");
   }
-  console.log(pages)
+  //Logica de los numeros
+
+  let firstNumber = document.querySelector("#pageNav li:nth-child(2) a");
+  let secondNumber = document.querySelector("#pageNav li:nth-child(3) a");
+  let thirdNumber = document.querySelector("#pageNav li:nth-child(4) a");
+
+  if (page == 1) {
+    firstNumber.parentElement.classList.add("active");
+    secondNumber.parentElement.classList.remove("active");
+  } else if (page == pages.last) {
+    thirdNumber.parentElement.classList.add("active");
+    secondNumber.parentElement.classList.remove("active");
+  } else {
+    firstNumber.innerText = parseInt(page) - 1;
+    firstNumber.setAttribute("data-page", parseInt(page) - 1);
+    secondNumber.innerText = parseInt(page);
+    secondNumber.setAttribute("data-page", parseInt(page));
+    thirdNumber.innerText = parseInt(page) + 1;
+    thirdNumber.setAttribute("data-page", parseInt(page) + 1);
+    secondNumber.parentElement.classList.add("active");
+    firstNumber.parentElement.classList.remove("active");
+    thirdNumber.parentElement.classList.remove("active");
+  }
+
+  console.log(pages);
 }
 
-async function deletePost(e){
-let postNun = e.target.getAttribute("data-postId")
- await fetch(`${url}/posts/${postNun}`, {
-  method: "DELETE"
-}).then(res => {
-  if (res.ok){
-    var myModalEl = document.querySelector("#modalPost");
-  var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
-  modal.hide()
-  getPosts()
-  }
-})
+async function deletePost(e) {
+  let postNun = e.target.getAttribute("data-postId");
+  await fetch(`${url}/posts/${postNun}`, {
+    method: "DELETE",
+  }).then((res) => {
+    if (res.ok) {
+      var myModalEl = document.querySelector("#modalPost");
+      var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
+      modal.hide();
+      getPosts();
+    }
+  });
 }
 
 function createPostModal(e) {
-  document.getElementById("saveModifiedPost").setAttribute("data-postId",  e.relatedTarget.getAttribute("data-postId"))
+  document
+    .getElementById("saveModifiedPost")
+    .setAttribute("data-postId", e.relatedTarget.getAttribute("data-postId"));
 }
 
-async function modifyPost(e){
-let id = e.target.getAttribute("data-postId")
-let title = document.getElementById("title").value
-let body = document.getElementById("fBody").value
+async function modifyPost(e) {
+  let id = e.target.getAttribute("data-postId");
+  let title = document.getElementById("title").value;
+  let body = document.getElementById("fBody").value;
 
-let data = {title: title, body:body}
+  let data = { title: title, body: body };
 
-await fetch(`${url}/posts/${id}`, {
-  method: "PATCH",
-  headers: {"Content-type":"application/json"},
-  body: JSON.stringify(data)
-}).then(res => {
-  if (res.ok){
-    var myModalEl = document.querySelector("#modalEditPost");
-  var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
-  modal.hide()
-  getPosts()
-  }
-})
+  await fetch(`${url}/posts/${id}`, {
+    method: "PATCH",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(data),
+  }).then((res) => {
+    if (res.ok) {
+      var myModalEl = document.querySelector("#modalEditPost");
+      var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
+      modal.hide();
+      getPosts();
+    }
+  });
 }
 
 getPosts();
