@@ -9,7 +9,8 @@ document
   .getElementById("saveModifiedPost")
   .addEventListener("click", modifyPost);
 let last = null;
-const url = " http://localhost:3000";
+const url = "https://jsonplaceholder.typicode.com";
+//const url = " http://localhost:3000";
 
 async function getPosts() {
   let response = await fetch(`${url}/posts?_page=${page}&_limit=${limit}`);
